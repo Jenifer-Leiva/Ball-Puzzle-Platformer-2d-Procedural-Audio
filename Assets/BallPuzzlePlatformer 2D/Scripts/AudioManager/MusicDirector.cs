@@ -245,14 +245,14 @@ private IEnumerator Co_FadeOutYDetener(float duracion)
         l6.chocalho = Instrumento(S("1111 1111 1111 1111", DivisionRitmica.Semicorchea));
         niveles[6] = l6;
 
-        ConfiguracionMusical l7 = Nueva("Nivel 7", 100, 4);
+        ConfiguracionMusical l7 = Nueva("Nivel 7", 90, 4);
         l7.agogo = Instrumento(S("1100 1101 0000 0111", DivisionRitmica.Semicorchea));
         l7.surdo = Instrumento(S("0000 1111 0011 0011", DivisionRitmica.Semicorchea));
         l7.repique = Instrumento(S("0010 1010 0000 0000", DivisionRitmica.Semicorchea));
         l7.tamborim = Instrumento(S("0101 0101 0101 0101", DivisionRitmica.Semicorchea));
         niveles[7] = l7;
 
-        ConfiguracionMusical l8 = Nueva("Nivel 8", 100, 4);
+        ConfiguracionMusical l8 = Nueva("Nivel 8", 90, 4);
         l8.agogo = Instrumento(S("1100 1101 0000 0111", DivisionRitmica.Semicorchea));
         l8.surdo = Instrumento(S("0000 1111 0011 0011", DivisionRitmica.Semicorchea));
         l8.repique = Instrumento(S("0010 1010 0000 0000", DivisionRitmica.Semicorchea));
@@ -261,7 +261,7 @@ private IEnumerator Co_FadeOutYDetener(float duracion)
         l8.chocalho = Instrumento(S("1111 1111 0000 0000", DivisionRitmica.Semicorchea));
         niveles[8] = l8;
 
-        ConfiguracionMusical l9 = Nueva("Niveles 9", 115, 3);
+        ConfiguracionMusical l9 = Nueva("Niveles 9", 100, 3);
         l9.surdo = Instrumento(
             S("0001 1000 1101", DivisionRitmica.Semicorchea),
             S("1010 1010 1101", DivisionRitmica.Semicorchea));
@@ -270,7 +270,7 @@ private IEnumerator Co_FadeOutYDetener(float duracion)
         l9.tamborim = Instrumento(S("1111 0110 1111", DivisionRitmica.Semicorchea));
         niveles[9] = l9;
 
-        ConfiguracionMusical l10 = Nueva("Niveles 9", 115, 3);
+        ConfiguracionMusical l10 = Nueva("Niveles 9", 100, 3);
         l10.surdo = Instrumento(
             S("0001 1000 1101", DivisionRitmica.Semicorchea),
             S("1010 1010 1101", DivisionRitmica.Semicorchea));

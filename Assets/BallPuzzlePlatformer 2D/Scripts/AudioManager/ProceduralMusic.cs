@@ -12,6 +12,22 @@ public enum DivisionRitmica
 }
 
 
+public enum NotaMusical
+{
+    Do = 0,
+    DoSostenido = 1,
+    Re = 2,
+    ReSostenido = 3,
+    Mi = 4,
+    Fa = 5,
+    FaSostenido = 6,
+    Sol = 7,
+    SolSostenido = 8,
+    La = 9,
+    LaSostenido = 10,
+    Si = 11
+}
+
 
 
 [System.Serializable]
@@ -49,8 +65,24 @@ public class ConfiguracionInstrumento
     [Header("Estado")]
     public bool activo = true;
 
-    [Header("Sonido")]
-    [Min(1f)] public float frecuencia = 440f;
+    [Header("Afinación musical")]
+    public NotaMusical nota = NotaMusical.La;
+
+    [Range(0, 8)]
+    public int octava = 4;
+
+    public float frecuencia
+    {
+        get
+        {
+            int midi = (octava + 1) * 12 + (int)nota;
+
+            return 440f * Mathf.Pow(
+                2f,
+                (midi - 69) / 12f
+            );
+        }
+    }
 
     [Header("Segundo sonido opcional")]
     [Min(0f)] public float frecuenciaSecundaria = 0f;
@@ -144,8 +176,9 @@ private float GenerarClick(
     public ConfiguracionInstrumento agogo =
         new ConfiguracionInstrumento
         {
-            frecuencia = 903f,
-            volumen = 0.2f,
+            nota = (NotaMusical)9,
+            octava = 4,
+            volumen = 0.1f,
 
             envolvente = new EnvolventeInstrumento
             {
@@ -157,7 +190,7 @@ private float GenerarClick(
             },
 
             frecuenciaSecundaria = 2100f,
-            volumenSecundario = 0.12f,
+            volumenSecundario = 0.05f,
 
             envolventeSecundaria = new EnvolventeInstrumento
             {
@@ -187,8 +220,9 @@ private float GenerarClick(
     public ConfiguracionInstrumento surdo =
         new ConfiguracionInstrumento
         {
-            frecuencia = 100f,
-            volumen = 1f,
+            nota = (NotaMusical)9,
+            octava = 3,
+            volumen = 0.5f,
             nivelRuido = 0.05f,
             reverberacion = 0.9f,
 
@@ -220,9 +254,10 @@ private float GenerarClick(
     public ConfiguracionInstrumento repique =
         new ConfiguracionInstrumento
         {
-            frecuencia = 756f,
-            volumen = 0.2f,
-            nivelRuido = 0.1f,
+            nota = (NotaMusical)9,
+            octava = 4,
+            volumen = 0.7f,
+            nivelRuido = 0.05f,
             reverberacion = 0.4f,
 
             envolvente = new EnvolventeInstrumento
@@ -253,9 +288,10 @@ private float GenerarClick(
     public ConfiguracionInstrumento tamborim =
         new ConfiguracionInstrumento
         {
-            frecuencia = 756f,
+            nota = (NotaMusical)6,
+            octava = 4,
             volumen = 0.2f,
-            nivelRuido = 0.1f,
+            nivelRuido = 0.05f,
             reverberacion = 0.4f,
 
             envolvente = new EnvolventeInstrumento
@@ -286,7 +322,8 @@ private float GenerarClick(
     public ConfiguracionInstrumento cuica =
         new ConfiguracionInstrumento
         {
-            frecuencia = 283f,
+            nota = NotaMusical.La,
+            octava = 5,
             volumen = 0.2f,
             reverberacion = 0.4f,
 
@@ -318,7 +355,8 @@ private float GenerarClick(
     public ConfiguracionInstrumento silbato =
         new ConfiguracionInstrumento
         {
-            frecuencia = 1997f,
+            nota = (NotaMusical)11,
+            octava = 6,
             volumen = 0.2f,
 
             envolvente = new EnvolventeInstrumento
@@ -349,9 +387,10 @@ private float GenerarClick(
     public ConfiguracionInstrumento caixa =
         new ConfiguracionInstrumento
         {
-            frecuencia = 330f,
+            nota = (NotaMusical)4,
+            octava = 4,
             volumen = 0.2f,
-            nivelRuido = 0.1f,
+            nivelRuido = 0.02f,
             reverberacion = 0.4f,
 
             envolvente = new EnvolventeInstrumento
@@ -382,9 +421,10 @@ private float GenerarClick(
     public ConfiguracionInstrumento chocalho =
         new ConfiguracionInstrumento
         {
-            frecuencia = 1975.53f,
-            volumen = 0.2f,
-            nivelRuido = 0.8f,
+            nota = (NotaMusical)11,
+            octava = 6,
+            volumen = 1f,
+            nivelRuido = 1f,
             reverberacion = 0.2f,
 
             envolvente = new EnvolventeInstrumento
@@ -558,6 +598,11 @@ private float GenerarClick(
     private double cuicaPhase;
     private double silbatoPhase;
     private double silbatoLfoPhase;
+
+    private double silbatoVibratoPhase;
+private double silbatoMultiplyPhase;
+
+
     private double caixaPhase;
     private double chocalhoPhase;
 
@@ -1357,6 +1402,8 @@ if (metronomoActivo && !inIntro)
             // CUICA
 
             float cuicaSound = 0f;
+        
+float frecuenciaCuicaActual = cuica.frecuencia;
 
             if (cuica.activo && !inIntro)
             {
@@ -1373,11 +1420,17 @@ if (metronomoActivo && !inIntro)
                         cuica.envolvente
                     );
 
-                    float pitchVariation =
-                        1f + 0.12f *
-                        (float)System.Math.Sin(
-                            TwoPi * 5f * (float)tiempoCuica
-                        );
+                    float rangoNotas = 12f; // Una octava
+                    float velocidad = 5f;
+
+                    // Oscila entre 0 y 12 semitonos
+                    float desplazamiento =
+                        (Mathf.Sin((float)(tiempoCuica * velocidad * TwoPi)) + 1f)
+                        * 0.5f * rangoNotas;
+
+                    // Convierte semitonos a frecuencia
+                    frecuenciaCuicaActual =
+                        cuica.frecuencia * Mathf.Pow(2f, desplazamiento / 12f);
 
                     float tono =
                         (float)System.Math.Sin(cuicaPhase) *
@@ -1390,6 +1443,8 @@ if (metronomoActivo && !inIntro)
                         wet * cuica.reverberacion;
                 }
             }   
+
+            // SILBATO
 
             // SILBATO
 
@@ -1410,16 +1465,31 @@ if (metronomoActivo && !inIntro)
                         silbato.envolvente
                     );
 
-                    float lfo = 0.5f + 0.5f *
-                        (float)System.Math.Sin(silbatoLfoPhase);
+                
+                    // LFO 2: VIBRATO - máxima profundidad
+                    float vibrato =
+                        (float)System.Math.Sin(silbatoVibratoPhase);
 
-                    float amplitud = 0.65f + 0.35f * lfo;
+                    float profundidadVibrato = 1f;
 
-                    silbatoSound =
+                    float frecuenciaActual =
+                        silbato.frecuencia *
+                        (1f + vibrato * profundidadVibrato);
+
+                    // LFO 3: MULTIPLY - máxima intensidad
+                    float multiply =
+                        1f *
+                        (float)System.Math.Sin(silbatoMultiplyPhase);
+
+                    // Oscilador con frecuencia modulada
+                    float tono =
                         (float)System.Math.Sin(silbatoPhase) *
                         silbato.volumen *
-                        env *
-                        amplitud;
+                        env;
+
+                    silbatoSound =
+                        tono *
+                        multiply;
                 }
             }
 
@@ -1699,19 +1769,33 @@ if (metronomoActivo && !inIntro)
             if (cuicaPhase > TwoPi)
                 cuicaPhase -= TwoPi;
 
-            // Silbato
+            // SILBATO: OSCILADOR PRINCIPAL
             silbatoPhase +=
                 TwoPi * silbato.frecuencia / sampleRate;
 
             if (silbatoPhase > TwoPi)
                 silbatoPhase -= TwoPi;
 
-            // LFO del Silbato
+            // TREMOLO: 5 Hz
             silbatoLfoPhase +=
                 TwoPi * 5f / sampleRate;
 
             if (silbatoLfoPhase > TwoPi)
                 silbatoLfoPhase -= TwoPi;
+
+            // VIBRATO: 8 Hz
+            silbatoVibratoPhase +=
+                TwoPi * 8f / sampleRate;
+
+            if (silbatoVibratoPhase > TwoPi)
+                silbatoVibratoPhase -= TwoPi;
+
+            // MULTIPLY: 12 Hz
+            silbatoMultiplyPhase +=
+                TwoPi * 12f / sampleRate;
+
+            if (silbatoMultiplyPhase > TwoPi)
+                silbatoMultiplyPhase -= TwoPi;
 
             // Caixa
             caixaPhase +=

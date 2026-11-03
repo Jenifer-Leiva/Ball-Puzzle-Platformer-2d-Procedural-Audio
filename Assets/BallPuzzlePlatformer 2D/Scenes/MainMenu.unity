@@ -570,16 +570,17 @@ MonoBehaviour:
   tiemposPorCompas: 4
   agogo:
     activo: 1
-    frecuencia: 903
+    nota: 9
+    octava: 4
     frecuenciaSecundaria: 2100
-    volumenSecundario: 0.12
+    volumenSecundario: 0.05
     envolventeSecundaria:
       attackMs: 10
       decayMs: 80
       sustainLevel: 0.05
       sustainMs: 160
       releaseMs: 180
-    volumen: 0.2
+    volumen: 0.1
     nivelRuido: 0
     reverberacion: 0
     envolvente:
@@ -594,7 +595,8 @@ MonoBehaviour:
       patron: 00000000000000000000000000000000
   surdo:
     activo: 1
-    frecuencia: 120
+    nota: 9
+    octava: 3
     frecuenciaSecundaria: 0
     volumenSecundario: 0.1
     envolventeSecundaria:
@@ -603,7 +605,7 @@ MonoBehaviour:
       sustainLevel: 0.5
       sustainMs: 100
       releaseMs: 20
-    volumen: 1
+    volumen: 0.5
     nivelRuido: 0.05
     reverberacion: 0.9
     envolvente:
@@ -618,7 +620,8 @@ MonoBehaviour:
       patron: 00000000000000000000000000000000
   repique:
     activo: 1
-    frecuencia: 756
+    nota: 9
+    octava: 4
     frecuenciaSecundaria: 0
     volumenSecundario: 0.1
     envolventeSecundaria:
@@ -627,8 +630,8 @@ MonoBehaviour:
       sustainLevel: 0.5
       sustainMs: 100
       releaseMs: 20
-    volumen: 0.2
-    nivelRuido: 0.1
+    volumen: 0.7
+    nivelRuido: 0.05
     reverberacion: 0.4
     envolvente:
       attackMs: 4
@@ -642,7 +645,8 @@ MonoBehaviour:
       patron: 00000000000000000000000000000000
   tamborim:
     activo: 1
-    frecuencia: 756
+    nota: 6
+    octava: 4
     frecuenciaSecundaria: 0
     volumenSecundario: 0.1
     envolventeSecundaria:
@@ -652,7 +656,7 @@ MonoBehaviour:
       sustainMs: 100
       releaseMs: 20
     volumen: 0.2
-    nivelRuido: 0.1
+    nivelRuido: 0.05
     reverberacion: 0.4
     envolvente:
       attackMs: 4
@@ -666,7 +670,8 @@ MonoBehaviour:
       patron: 00000000000000000000000000000000
   cuica:
     activo: 1
-    frecuencia: 283
+    nota: 9
+    octava: 5
     frecuenciaSecundaria: 0
     volumenSecundario: 0.1
     envolventeSecundaria:
@@ -690,7 +695,8 @@ MonoBehaviour:
       patron: 00000000000000000000000000000000
   silbato:
     activo: 1
-    frecuencia: 1997
+    nota: 11
+    octava: 6
     frecuenciaSecundaria: 0
     volumenSecundario: 0.1
     envolventeSecundaria:
@@ -714,7 +720,8 @@ MonoBehaviour:
       patron: 00000000000000000000000000000000
   caixa:
     activo: 1
-    frecuencia: 330
+    nota: 4
+    octava: 4
     frecuenciaSecundaria: 0
     volumenSecundario: 0.1
     envolventeSecundaria:
@@ -724,7 +731,7 @@ MonoBehaviour:
       sustainMs: 100
       releaseMs: 20
     volumen: 0.2
-    nivelRuido: 0.1
+    nivelRuido: 0.02
     reverberacion: 0.4
     envolvente:
       attackMs: 2
@@ -738,7 +745,8 @@ MonoBehaviour:
       patron: 00000000000000000000000000000000
   chocalho:
     activo: 1
-    frecuencia: 1975.53
+    nota: 11
+    octava: 6
     frecuenciaSecundaria: 0
     volumenSecundario: 0.1
     envolventeSecundaria:
@@ -747,8 +755,8 @@ MonoBehaviour:
       sustainLevel: 0.5
       sustainMs: 100
       releaseMs: 20
-    volumen: 0.2
-    nivelRuido: 0.8
+    volumen: 1
+    nivelRuido: 1
     reverberacion: 0.2
     envolvente:
       attackMs: 5
