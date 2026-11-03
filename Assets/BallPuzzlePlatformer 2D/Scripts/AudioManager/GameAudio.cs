@@ -3,70 +3,87 @@ using UnityEngine;
 
 namespace View.Control
 {
-    public class GameAudio : MonoBehaviour
+    
+public class GameAudio : MonoBehaviour
+{
+    private static GameAudio instancia;
+
+    private const string MusicStatusKey = "music.status";
+    private const string SfxStatusKey = "sfx.status";
+
+    public AudioClip[] SfxClips;
+
+    private AudioSource _musicSource;
+    private int _musicVolumeTweenId;
+    private ProceduralMusic _proceduralMusic;
+    private ProceduralEffects _proceduralEffects;
+
+    private bool _musicEnabled = true;
+
+    public bool MusicEnabled
     {
-        private const string MusicStatusKey = "music.status";
-        private const string SfxStatusKey = "sfx.status";
-
-        public AudioClip[] SfxClips;
-
-        private AudioSource _musicSource;
-        private int _musicVolumeTweenId;
-        private ProceduralMusic _proceduralMusic;
-        private ProceduralEffects _proceduralEffects;
-        private bool _musicEnabled = true;
-        public bool MusicEnabled
+        get { return _musicEnabled; }
+        set
         {
-            get { return _musicEnabled; }
-            set
-            {
-                if (_musicEnabled != value)
-                {
-                    LeanTween.cancel(_musicVolumeTweenId);
-                }
+            if (_musicEnabled != value)
+                LeanTween.cancel(_musicVolumeTweenId);
 
-                _musicEnabled = value;
+            _musicEnabled = value;
 
-                if (_musicSource == null)
-                    _musicSource = GetComponent<AudioSource>();
+            if (_musicSource == null && _proceduralMusic != null)
+                _musicSource = _proceduralMusic.GetComponent<AudioSource>();
 
-                PlayerPrefs.SetInt(MusicStatusKey, value ? 0 : 1);
-            }
+            if (_musicSource != null)
+                _musicSource.mute = !value;
+
+            PlayerPrefs.SetInt(MusicStatusKey, value ? 0 : 1);
+        }
+    }
+
+    private bool _sfxEnabled = true;
+
+    public bool SfxEnabled
+    {
+        get { return _sfxEnabled; }
+        set
+        {
+            _sfxEnabled = value;
+            PlayerPrefs.SetInt(SfxStatusKey, value ? 0 : 1);
+        }
+    }
+
+    private void Awake()
+    {
+        // Evita que se acumulen GameAudio al cambiar de escena.
+        if (instancia != null && instancia != this)
+        {
+            Destroy(gameObject);
+            return;
         }
 
-        private bool _sfxEnabled = true;
-        public bool SfxEnabled
-        {
-            get { return _sfxEnabled; }
-            set
-            {
-                _sfxEnabled = value;
-                PlayerPrefs.SetInt(SfxStatusKey, value ? 0 : 1);
-            }
-        }
+        instancia = this;
+        DontDestroyOnLoad(gameObject);
 
-        private void Awake()
-        {
-            StartEffects();
-            DontDestroyOnLoad(gameObject);
-        }
+        StartEffects();
+    }
 
-        private void Start()
-        {
-            StartMusic();
+    private void Start()
+    {
+        // Si este objeto fue destruido por ser duplicado, no continúa.
+        if (instancia != this) return;
 
-            if (!PlayerPrefs.HasKey(MusicStatusKey))
-            {
-                PlayerPrefs.SetInt(MusicStatusKey, 0);
-            }
-            if (!PlayerPrefs.HasKey(SfxStatusKey))
-            {
-                PlayerPrefs.SetInt(SfxStatusKey, 0);
-            }
+        StartMusic();
 
-            MusicEnabled = PlayerPrefs.GetInt(MusicStatusKey) == 0;
-            SfxEnabled = PlayerPrefs.GetInt(SfxStatusKey) == 0;
-        }
+        if (!PlayerPrefs.HasKey(MusicStatusKey))
+            PlayerPrefs.SetInt(MusicStatusKey, 0);
+
+        if (!PlayerPrefs.HasKey(SfxStatusKey))
+            PlayerPrefs.SetInt(SfxStatusKey, 0);
+
+        MusicEnabled = PlayerPrefs.GetInt(MusicStatusKey) == 0;
+        SfxEnabled = PlayerPrefs.GetInt(SfxStatusKey) == 0;
+    }
+
 
        public void Play(GameClip clip, float delay = 0f, float volume = 1.5f, float startTime = 0f)
         {
@@ -111,28 +128,43 @@ namespace View.Control
             _proceduralEffects.FillClips(SfxClips);
         }
 
-        private void StartMusic()
-        {
-            _proceduralMusic = GetComponent<ProceduralMusic>();
+        
+       private void StartMusic()
+{
+    // Prioridad: utilizar el motor que controla MusicDirector.
+    if (MusicDirector.Instancia != null)
+    {
+        _proceduralMusic = MusicDirector.Instancia.motorMusical;
+    }
 
-            if (_proceduralMusic == null)
-            {
-                Debug.LogError("NO SE ENCONTRÓ PROCEDURAL MUSIC");
-                return;
-            }
+    // Búsqueda alternativa.
+    if (_proceduralMusic == null)
+    {
+        _proceduralMusic = GetComponent<ProceduralMusic>();
+    }
 
-            if (_proceduralMusic != null)
-            {
-            
-                _musicSource = GetComponent<AudioSource>();
+    if (_proceduralMusic == null)
+    {
+        _proceduralMusic = FindObjectOfType<ProceduralMusic>();
+    }
 
-                if (_musicSource == null)
-                    _musicSource = gameObject.AddComponent<AudioSource>();
+    if (_proceduralMusic == null)
+    {
+        Debug.LogError("No se encontró ProceduralMusic.");
+        return;
+    }
 
-                _proceduralMusic.enabled = true;
-                return;
-            }
-        }
+    _musicSource = _proceduralMusic.GetComponent<AudioSource>();
+
+    if (_musicSource == null)
+        _musicSource = _proceduralMusic.gameObject.AddComponent<AudioSource>();
+
+    _proceduralMusic.enabled = true;
+
+    Debug.Log("GameAudio conectado al motor: " +
+              _proceduralMusic.gameObject.name);
+}
+
 
     }
 

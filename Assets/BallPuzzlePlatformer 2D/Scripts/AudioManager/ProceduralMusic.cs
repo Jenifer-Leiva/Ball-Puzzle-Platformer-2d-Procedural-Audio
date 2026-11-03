@@ -1,6 +1,34 @@
 
 using UnityEngine;
 
+
+public enum DivisionRitmica
+{
+    Redonda,       // 4 tiempos
+    Blanca,        // 2 tiempos
+    Negra,         // 1 tiempo
+    Corchea,       // 0.5 tiempos
+    Semicorchea    // 0.25 tiempos
+}
+
+
+
+
+[System.Serializable]
+public class SeccionRitmica
+{
+    [Header("Duración de la sección")]
+    [Min(1)]
+    public int compases = 1;
+
+    [Header("Subdivisión")]
+    public DivisionRitmica division = DivisionRitmica.Negra;
+
+    [Header("Patrón")]
+    public int[] patron = {0};
+}
+
+
 [System.Serializable]
 public class EnvolventeInstrumento
 {
@@ -45,17 +73,71 @@ public class ConfiguracionInstrumento
     [Header("Envolvente")]
     public EnvolventeInstrumento envolvente =
         new EnvolventeInstrumento();
+
+     [Header("Secuencia rítmica")]
+    public SeccionRitmica[] seccionesRitmicas =
+        new SeccionRitmica[]
+        {
+            new SeccionRitmica()
+        };
 }
 
 [RequireComponent(typeof(AudioSource))]
 public class ProceduralMusic : MonoBehaviour
 {
+
+
+    [Header("Metrónomo")]
+public bool metronomoActivo = true;
+
+[Range(0f, 1f)]
+public float volumenMetronomo = 0.3f;
+
+public float frecuenciaPulsoFuerte = 1500f;
+public float frecuenciaPulsoDebil = 1000f;
+
+private double tiempoUltimoPulso = -1;
+private double faseMetronomo;
+
+
+
+private float GenerarClick(
+    double tiempo,
+    float frecuencia,
+    float duracion = 0.035f)
+{
+    if (tiempo < 0 || tiempo >= duracion)
+        return 0f;
+
+    float envolvente =
+        1f - (float)(tiempo / duracion);
+
+    envolvente *= envolvente;
+
+    float sonido =
+        (float)System.Math.Sin(faseMetronomo);
+
+    faseMetronomo +=
+        TwoPi * frecuencia / sampleRate;
+
+    if (faseMetronomo > TwoPi)
+        faseMetronomo -= TwoPi;
+
+    return sonido * envolvente * volumenMetronomo;
+}
+
+
+
     [Header("Wavetable")]
     public WavetableTxtLoader wavetableLoader;
 
     [Header("Música")]
-    [Range(60f, 130f)]
-    public float tempo = 80f;
+    [Range(60f, 500f)]
+    public float tempo = 160f;
+
+    [Header("Compás")]
+    [Range(2, 7)]
+    public int tiemposPorCompas = 4;
 
     [Header("Instrumentos Samba")]
 
@@ -84,6 +166,21 @@ public class ProceduralMusic : MonoBehaviour
                 sustainLevel = 0.05f,
                 sustainMs = 160f,
                 releaseMs = 180f
+            },
+
+            seccionesRitmicas = new SeccionRitmica[]
+            {
+                // Primera sección: un compás de negras
+                new SeccionRitmica
+                {
+                    compases = 1,
+                    division = DivisionRitmica.Negra,
+                    patron = new int[]
+                    {
+                        0,0,0
+                    }
+                }
+
             }
         };
 
@@ -102,6 +199,21 @@ public class ProceduralMusic : MonoBehaviour
                 sustainLevel = 0.2f,
                 sustainMs = 210f,
                 releaseMs = 0f
+            },
+
+            seccionesRitmicas = new SeccionRitmica[]
+            {
+                // Primera sección: un compás de negras
+                new SeccionRitmica
+                {
+                    compases = 1,
+                    division = DivisionRitmica.Negra,
+                    patron = new int[]
+                    {
+                       0,0,0
+                    }
+                }
+
             }
         };
 
@@ -120,6 +232,21 @@ public class ProceduralMusic : MonoBehaviour
                 sustainLevel = 0.1f,
                 sustainMs = 70f,
                 releaseMs = 34f
+            },
+
+            seccionesRitmicas = new SeccionRitmica[]
+            {
+                // Primera sección: un compás de negras
+                new SeccionRitmica
+                {
+                    compases = 1,
+                    division = DivisionRitmica.Negra,
+                    patron = new int[]
+                    {
+                        0,0,0
+                    }
+                }
+
             }
         };
 
@@ -138,6 +265,21 @@ public class ProceduralMusic : MonoBehaviour
                 sustainLevel = 0.1f,
                 sustainMs = 70f,
                 releaseMs = 34f
+            },
+
+            seccionesRitmicas = new SeccionRitmica[]
+            {
+                // Primera sección: un compás de negras
+                new SeccionRitmica
+                {
+                    compases = 1,
+                    division = DivisionRitmica.Negra,
+                    patron = new int[]
+                    {
+                        0,0,0
+                    }
+                }
+
             }
         };
 
@@ -155,6 +297,21 @@ public class ProceduralMusic : MonoBehaviour
                 sustainLevel = 0.5f,
                 sustainMs = 0f,
                 releaseMs = 77f
+            },
+
+            seccionesRitmicas = new SeccionRitmica[]
+            {
+                // Primera sección: un compás de negras
+                new SeccionRitmica
+                {
+                    compases = 1,
+                    division = DivisionRitmica.Negra,
+                    patron = new int[]
+                    {
+                        0,0,0
+                    }
+                }
+
             }
         };
 
@@ -171,6 +328,21 @@ public class ProceduralMusic : MonoBehaviour
                 sustainLevel = 0.6f,
                 sustainMs = 151f,
                 releaseMs = 91f
+            },
+
+            seccionesRitmicas = new SeccionRitmica[]
+            {
+                // Primera sección: un compás de negras
+                new SeccionRitmica
+                {
+                    compases = 1,
+                    division = DivisionRitmica.Negra,
+                    patron = new int[]
+                    {
+                        0,0,0
+                    }
+                }
+
             }
         };
 
@@ -189,6 +361,21 @@ public class ProceduralMusic : MonoBehaviour
                 sustainLevel = 0f,
                 sustainMs = 190f,
                 releaseMs = 0f
+            },
+
+            seccionesRitmicas = new SeccionRitmica[]
+            {
+                // Primera sección: un compás de negras
+                new SeccionRitmica
+                {
+                    compases = 1,
+                    division = DivisionRitmica.Negra,
+                    patron = new int[]
+                    {
+                        0,0,0
+                    }
+                }
+
             }
         };
 
@@ -207,6 +394,21 @@ public class ProceduralMusic : MonoBehaviour
                 sustainLevel = 0.1f,
                 sustainMs = 18f,
                 releaseMs = 20f
+            },
+
+            seccionesRitmicas = new SeccionRitmica[]
+            {
+                // Primera sección: un compás de negras
+                new SeccionRitmica
+                {
+                    compases = 1,
+                    division = DivisionRitmica.Negra,
+                    patron = new int[]
+                    {
+                        0,0,0
+                    }
+                }
+
             }
         };
 
@@ -258,55 +460,6 @@ public class ProceduralMusic : MonoBehaviour
     [Range(0f, 1f)]
     public float hatVolume = 0.035f;
 
-    // PATRONES RÍTMICOS
-
-    private static readonly int[] AgogoPattern =
-    {
-        1, 1, 1, 0, 1, 1, 1, 1
-    };
-
-    private static readonly int[] SurdoPattern =
-    {
-        1, 1, 1, 0, 1, 1, 1, 1
-    };
-
-    private static readonly int[] RepiquePattern =
-    {
-        1, 1, 1, 1, 1, 1, 1, 1
-    };
-
-    private static readonly int[] TamborimPattern =
-    {
-        1, 0, 1, 1,
-        0, 1, 0, 1,
-        1, 0, 1, 0,
-        1, 1, 0, 1
-    };
-
-    private static readonly int[] CuicaPattern =
-    {
-        1, 0, 1, 0,
-        0, 1, 0, 1
-    };
-
-    private static readonly int[] SilbatoPattern =
-    {
-        1, 0, 1, 0,
-        1, 0, 1, 1
-    };
-
-    private static readonly int[] CaixaPattern =
-    {
-        1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0
-    };
-
-    private static readonly int[] ChocalhoPattern =
-    {
-        1, 1, 1, 1,
-        1, 1, 1, 1,
-        1, 1, 1, 1,
-        1, 1, 1, 1
-    };
 
     // ARMÓNICOS DE LA CAIXA
 
@@ -407,6 +560,19 @@ public class ProceduralMusic : MonoBehaviour
     private double silbatoLfoPhase;
     private double caixaPhase;
     private double chocalhoPhase;
+
+
+    // Pequeños choques del chocalho
+private const int ChocalhoGrainCount = 20;
+
+private float[] chocalhoGrainDelay =
+    new float[ChocalhoGrainCount];
+
+private float[] chocalhoGrainDuration =
+    new float[ChocalhoGrainCount];
+
+private float[] chocalhoGrainAmplitude =
+    new float[ChocalhoGrainCount];
 
     // ESTADO DE REVERBERACIÓN
 
@@ -762,7 +928,233 @@ public class ProceduralMusic : MonoBehaviour
         return (noiseState / (float)uint.MaxValue) * 2f - 1f;
     }
 
+
+
+private void GenerarChoquesChocalho()
+{
+    for (int i = 0; i < ChocalhoGrainCount; i++)
+    {
+        // Aparición aleatoria entre 0 y 45 milisegundos
+        chocalhoGrainDelay[i] =
+            (Noise() * 0.5f + 0.5f) * 0.045f;
+
+        // Duración aleatoria entre 2 y 8 milisegundos
+        chocalhoGrainDuration[i] =
+            0.002f + (Noise() * 0.5f + 0.5f) * 0.006f;
+
+        // Intensidad aleatoria de cada choque
+        chocalhoGrainAmplitude[i] =
+            0.3f + (Noise() * 0.5f + 0.5f) * 0.7f;
+    }
+}
     // MOTOR DE AUDIO
+
+
+   private static float ObtenerDuracionSubdivision(
+    DivisionRitmica division)
+    {
+        switch (division)
+        {
+            case DivisionRitmica.Redonda:
+                return 4f;
+            case DivisionRitmica.Blanca:
+                return 2f;
+            case DivisionRitmica.Negra:
+                return 1f;
+            case DivisionRitmica.Corchea:
+                return 0.5f;
+            case DivisionRitmica.Semicorchea:
+                return 0.25f;
+            default:
+                return 1f;
+        }
+    }
+
+
+    private bool ObtenerEventoRitmico(
+    ConfiguracionInstrumento instrumento,
+    double posicionBeat,
+    double beatDuration,
+    out double tiempoEvento)
+    {
+        tiempoEvento = 0.0;
+
+        if (instrumento == null ||
+            instrumento.seccionesRitmicas == null ||
+            instrumento.seccionesRitmicas.Length == 0)
+            return false;
+
+        double beatLocal = posicionBeat;
+
+        foreach (SeccionRitmica seccion in instrumento.seccionesRitmicas)
+        {
+            if (seccion == null)
+                continue;
+
+            double duracionSeccion =
+                Mathf.Max(1, seccion.compases) * tiemposPorCompas;
+
+            if (beatLocal < duracionSeccion)
+            {
+                if (seccion.patron == null ||
+                    seccion.patron.Length == 0)
+                    return false;
+
+                double subdivision =
+                    ObtenerDuracionSubdivision(seccion.division);
+
+                double posicionSubdivision =
+                    beatLocal / subdivision;
+
+                int indice =
+                    (int)System.Math.Floor(posicionSubdivision);
+
+                int indicePatron =
+                    indice % seccion.patron.Length;
+
+                if (seccion.patron[indicePatron] == 0)
+                    return false;
+
+                double fraccion =
+                    posicionSubdivision -
+                    System.Math.Floor(posicionSubdivision);
+
+                tiempoEvento =
+                    fraccion * subdivision * beatDuration;
+
+                return true;
+            }
+
+            beatLocal -= duracionSeccion;
+        }
+
+        // Repetir la secuencia desde el principio
+        return ObtenerEventoRitmico(
+            instrumento,
+            beatLocal,
+            beatDuration,
+            out tiempoEvento
+        );
+    }
+
+
+    // Aplica una configuración seleccionada por MusicDirector.
+    // Los parámetros tímbricos de cada instrumento se conservan; solo cambia
+    // tempo, compás y secuencias rítmicas.
+    public void AplicarConfiguracionMusical(ConfiguracionMusical config)
+    {
+        if (config == null) return;
+
+        tempo = Mathf.Clamp(config.bpm, 60f, 500f);
+        tiemposPorCompas = Mathf.Clamp(config.tiemposPorCompas, 2, 7);
+
+        CopiarPatrones(config.agogo, agogo);
+        CopiarPatrones(config.surdo, surdo);
+        CopiarPatrones(config.repique, repique);
+        CopiarPatrones(config.tamborim, tamborim);
+        CopiarPatrones(config.cuica, cuica);
+        CopiarPatrones(config.silbato, silbato);
+        CopiarPatrones(config.caixa, caixa);
+        CopiarPatrones(config.chocalho, chocalho);
+
+        // La introducción instrumental está incorporada como primera sección
+        // de cada instrumento. Desactivamos el efecto de intro pregrabado.
+        useSongStructure = false;
+        introSeconds = 0f;
+        beatPos = 0.0;
+        introElapsed = 0.0;
+        elapsedTime = 0.0;
+        tiempoUltimoPulso = -1;
+    }
+
+    private void CopiarPatrones(PatronInstrumento origen,
+                                ConfiguracionInstrumento destino)
+    {
+        if (origen == null || destino == null) return;
+        destino.activo = origen.activo;
+
+        if (origen.secciones == null || origen.secciones.Length == 0)
+        {
+            destino.seccionesRitmicas = new SeccionRitmica[0];
+            return;
+        }
+
+        SeccionRitmica[] copia = new SeccionRitmica[origen.secciones.Length];
+        for (int i = 0; i < origen.secciones.Length; i++)
+        {
+            SeccionRitmica s = origen.secciones[i];
+            if (s == null) continue;
+            copia[i] = new SeccionRitmica
+            {
+                compases = Mathf.Max(1, s.compases),
+                division = s.division,
+                patron = s.patron != null ? (int[])s.patron.Clone() : new int[0]
+            };
+        }
+        destino.seccionesRitmicas = copia;
+    }
+
+    private void OnValidate()
+{
+    AjustarPatrones(agogo);
+    AjustarPatrones(surdo);
+    AjustarPatrones(repique);
+    AjustarPatrones(tamborim);
+    AjustarPatrones(cuica);
+    AjustarPatrones(silbato);
+    AjustarPatrones(caixa);
+    AjustarPatrones(chocalho);
+}
+
+private void AjustarPatrones(
+    ConfiguracionInstrumento instrumento)
+{
+    if (instrumento == null ||
+        instrumento.seccionesRitmicas == null)
+        return;
+
+    foreach (SeccionRitmica seccion
+        in instrumento.seccionesRitmicas)
+    {
+        if (seccion == null)
+            continue;
+
+        // Duración de cada posición rítmica
+        float duracionSubdivision =
+            ObtenerDuracionSubdivision(seccion.division);
+
+        // Duración total de la sección en tiempos
+        float duracionTotal =
+            Mathf.Max(1, seccion.compases) * tiemposPorCompas;
+
+        // Cantidad de posiciones necesarias
+        int cantidad =
+            Mathf.CeilToInt(
+                duracionTotal / duracionSubdivision
+            );
+
+        // Crear un nuevo patrón del tamaño correcto
+        int[] nuevoPatron = new int[cantidad];
+
+        // Conservar los valores que ya existían
+        if (seccion.patron != null)
+        {
+            int limite = Mathf.Min(
+                seccion.patron.Length,
+                cantidad
+            );
+
+            for (int i = 0; i < limite; i++)
+            {
+                nuevoPatron[i] =
+                    Mathf.Clamp(seccion.patron[i], 0, 1);
+            }
+        }
+
+        // Los espacios nuevos quedan en cero
+        seccion.patron = nuevoPatron;
+    }
+}
 
     private void OnAudioFilterRead(float[] data, int channels)
     {
@@ -772,7 +1164,7 @@ public class ProceduralMusic : MonoBehaviour
         float[] table = waveTable;
 
         double beatDuration =
-            60.0 / Mathf.Clamp(tempo, 60f, 130f);
+            60.0 / Mathf.Clamp(tempo, 60f, 500f);
 
         double dBeat = 1.0 / (sampleRate * beatDuration);
         double dt = 1.0 / sampleRate;
@@ -796,40 +1188,64 @@ public class ProceduralMusic : MonoBehaviour
                 (beatPos - System.Math.Floor(beatPos))
                 * beatDuration;
 
+
+float metronomoSound = 0f;
+
+if (metronomoActivo && !inIntro)
+{
+    double beatActual = beatPos;
+
+    int pulso = (int)System.Math.Floor(beatActual);
+
+    if (pulso != tiempoUltimoPulso)
+    {
+        tiempoUltimoPulso = pulso;
+
+        float frecuencia =
+            pulso % tiemposPorCompas == 0
+            ? frecuenciaPulsoFuerte
+            : frecuenciaPulsoDebil;
+
+        metronomoSound = GenerarClick(
+            0,
+            frecuencia
+        );
+    }
+}
+
+
             // AGOGO
 
             float agogoSound = 0f;
 
-            if (agogo.activo && !inIntro)
+            if (agogo.activo && !inIntro &&
+                ObtenerEventoRitmico(
+                    agogo,
+                    beatPos,
+                    beatDuration,
+                    out double tiempoAgogo))
             {
-                int step =
-                    (int)System.Math.Floor(beatPos)
-                    % AgogoPattern.Length;
+                float envPrincipal = AdsrInstrumento(
+                    tiempoAgogo,
+                    agogo.envolvente
+                );
 
-                if (AgogoPattern[step] == 1)
-                {
-                    float envPrincipal = AdsrInstrumento(
-                        beatTime,
-                        agogo.envolvente
-                    );
+                float envSecundaria = AdsrInstrumento(
+                    tiempoAgogo,
+                    agogo.envolventeSecundaria
+                );
 
-                    float envSecundaria = AdsrInstrumento(
-                        beatTime,
-                        agogo.envolventeSecundaria
-                    );
+                float principal =
+                    Osc(agogoPhase, table) *
+                    agogo.volumen *
+                    envPrincipal;
 
-                    float principal =
-                        Osc(agogoPhase, table) *
-                        agogo.volumen *
-                        envPrincipal;
+                float secundario =
+                    Osc(agogoSecondPhase, table) *
+                    agogo.volumenSecundario *
+                    envSecundaria;
 
-                    float secundario =
-                        Osc(agogoSecondPhase, table) *
-                        agogo.volumenSecundario *
-                        envSecundaria;
-
-                    agogoSound = principal + secundario;
-                }
+                agogoSound = principal + secundario;
             }
 
             // SURDO
@@ -838,14 +1254,16 @@ public class ProceduralMusic : MonoBehaviour
 
             if (surdo.activo && !inIntro)
             {
-                int step =
-                    (int)System.Math.Floor(beatPos)
-                    % SurdoPattern.Length;
+                double tiempoSurdo;
 
-                if (SurdoPattern[step] == 1)
+                if (ObtenerEventoRitmico(
+                    surdo,
+                    beatPos,
+                    beatDuration,
+                    out tiempoSurdo))
                 {
                     float env = AdsrInstrumento(
-                        beatTime,
+                        (float)tiempoSurdo,
                         surdo.envolvente
                     );
 
@@ -868,14 +1286,16 @@ public class ProceduralMusic : MonoBehaviour
 
             if (repique.activo && !inIntro)
             {
-                int step =
-                    (int)System.Math.Floor(beatPos)
-                    % RepiquePattern.Length;
+                double tiempoRepique;
 
-                if (RepiquePattern[step] == 1)
+                if (ObtenerEventoRitmico(
+                    repique,
+                    beatPos,
+                    beatDuration,
+                    out tiempoRepique))
                 {
                     float env = AdsrInstrumento(
-                        beatTime,
+                        (float)tiempoRepique,
                         repique.envolvente
                     );
 
@@ -903,20 +1323,16 @@ public class ProceduralMusic : MonoBehaviour
 
             if (tamborim.activo && !inIntro)
             {
-                double position = beatPos * 4.0;
+                double tiempoTamborim;
 
-                int step =
-                    (int)System.Math.Floor(position)
-                    % TamborimPattern.Length;
-
-                double instrumentTime =
-                    (position - System.Math.Floor(position))
-                    * beatDuration / 4.0;
-
-                if (TamborimPattern[step] == 1)
+                if (ObtenerEventoRitmico(
+                    tamborim,
+                    beatPos,
+                    beatDuration,
+                    out tiempoTamborim))
                 {
                     float env = AdsrInstrumento(
-                        instrumentTime,
+                        (float)tiempoTamborim,
                         tamborim.envolvente
                     );
 
@@ -944,21 +1360,23 @@ public class ProceduralMusic : MonoBehaviour
 
             if (cuica.activo && !inIntro)
             {
-                int step =
-                    (int)System.Math.Floor(beatPos)
-                    % CuicaPattern.Length;
+                double tiempoCuica;
 
-                if (CuicaPattern[step] == 1)
+                if (ObtenerEventoRitmico(
+                    cuica,
+                    beatPos,
+                    beatDuration,
+                    out tiempoCuica))
                 {
                     float env = AdsrInstrumento(
-                        beatTime,
+                        (float)tiempoCuica,
                         cuica.envolvente
                     );
 
                     float pitchVariation =
                         1f + 0.12f *
                         (float)System.Math.Sin(
-                            TwoPi * 5f * beatTime
+                            TwoPi * 5f * (float)tiempoCuica
                         );
 
                     float tono =
@@ -971,7 +1389,7 @@ public class ProceduralMusic : MonoBehaviour
                     cuicaSound = tono +
                         wet * cuica.reverberacion;
                 }
-            }
+            }   
 
             // SILBATO
 
@@ -979,14 +1397,16 @@ public class ProceduralMusic : MonoBehaviour
 
             if (silbato.activo && !inIntro)
             {
-                int step =
-                    (int)System.Math.Floor(beatPos)
-                    % SilbatoPattern.Length;
+                double tiempoSilbato;
 
-                if (SilbatoPattern[step] == 1)
+                if (ObtenerEventoRitmico(
+                    silbato,
+                    beatPos,
+                    beatDuration,
+                    out tiempoSilbato))
                 {
                     float env = AdsrInstrumento(
-                        beatTime,
+                        (float)tiempoSilbato,
                         silbato.envolvente
                     );
 
@@ -1009,14 +1429,16 @@ public class ProceduralMusic : MonoBehaviour
 
             if (caixa.activo && !inIntro)
             {
-                int step =
-                    (int)System.Math.Floor(beatPos)
-                    % CaixaPattern.Length;
+                double tiempoCaixa;
 
-                if (CaixaPattern[step] == 1)
+                if (ObtenerEventoRitmico(
+                    caixa,
+                    beatPos,
+                    beatDuration,
+                    out tiempoCaixa))
                 {
                     float env = AdsrInstrumento(
-                        beatTime,
+                        (float)tiempoCaixa,
                         caixa.envolvente
                     );
 
@@ -1053,35 +1475,61 @@ public class ProceduralMusic : MonoBehaviour
 
             // CHOCALHO
 
+            // CHOCALHO
             float chocalhoSound = 0f;
 
             if (chocalho.activo && !inIntro)
             {
-                double position = beatPos * 4.0;
+                double tiempoChocalho;
 
-                int step =
-                    (int)System.Math.Floor(position)
-                    % ChocalhoPattern.Length;
-
-                double instrumentTime =
-                    (position - System.Math.Floor(position))
-                    * beatDuration / 4.0;
-
-                if (ChocalhoPattern[step] == 1)
+                if (ObtenerEventoRitmico(
+                    chocalho,
+                    beatPos,
+                    beatDuration,
+                    out tiempoChocalho))
                 {
+                    // Generar las partículas al comenzar cada golpe
+                    if (tiempoChocalho < dt * 1.5)
+                    {
+                        GenerarChoquesChocalho();
+                    }
+
                     float env = AdsrInstrumento(
-                        instrumentTime,
+                        (float)tiempoChocalho,
                         chocalho.envolvente
                     );
 
-                    float ruido = Noise();
+                    // Mezclar los pequeños choques
+                    float ruidoParticulas = 0f;
+
+                    for (int p = 0; p < ChocalhoGrainCount; p++)
+                    {
+                        // Esperar hasta que aparezca la partícula
+                        if (chocalhoGrainDelay[p] > 0f)
+                        {
+                            chocalhoGrainDelay[p] -= (float)dt;
+                        }
+                        else if (chocalhoGrainDuration[p] > 0f)
+                        {
+                            float envParticula =
+                                chocalhoGrainDuration[p] / 0.008f;
+
+                            ruidoParticulas +=
+                                Noise() *
+                                chocalhoGrainAmplitude[p] *
+                                envParticula;
+
+                            chocalhoGrainDuration[p] -= (float)dt;
+                        }
+                    }
 
                     float variacion =
                         0.7f + 0.3f *
                         (float)System.Math.Sin(chocalhoPhase);
 
                     float dry =
-                        ruido *
+                        ruidoParticulas *
+                        0.25f *
                         chocalho.nivelRuido *
                         chocalho.volumen *
                         env *
@@ -1178,18 +1626,19 @@ public class ProceduralMusic : MonoBehaviour
             // MEZCLA FINAL
 
             float output = (float)System.Math.Tanh(
-                (
-                    agogoSound +
-                    surdoSound +
-                    repiqueSound +
-                    tamborimSound +
-                    cuicaSound +
-                    silbatoSound +
-                    caixaSound +
-                    chocalhoSound +
-                    introOut
-                ) * 1.5f
-            );
+    (
+        agogoSound +
+        surdoSound +
+        repiqueSound +
+        tamborimSound +
+        cuicaSound +
+        silbatoSound +
+        caixaSound +
+        chocalhoSound +
+        introOut +
+        metronomoSound
+    ) * 1.5f
+);
 
             for (int c = 0; c < channels; c++)
                 data[i + c] = output;

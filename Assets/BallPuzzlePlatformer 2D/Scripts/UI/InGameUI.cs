@@ -68,9 +68,24 @@ namespace BallPuzzlePlatformer2D
         }
 
         public void BtnExit()
-        {
-            SceneManager.LoadScene("MainMenu");
-        }
+{
+    StartCoroutine(Co_BtnExit());
+}
+
+private IEnumerator Co_BtnExit()
+{
+    MusicDirector director = MusicDirector.Instancia;
+
+    if (director != null)
+    {
+        director.FadeOutYDetener(1.5f);
+
+        // Esperar a que termine el desvanecimiento.
+        yield return new WaitForSecondsRealtime(1.6f);
+    }
+
+    SceneManager.LoadScene("MainMenu");
+}
 
 
     }
