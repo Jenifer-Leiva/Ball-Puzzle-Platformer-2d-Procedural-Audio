@@ -86,7 +86,10 @@ private IEnumerator Co_BtnExit()
 
     SceneManager.LoadScene("MainMenu");
 }
-
+        {
+            ProceduralSfx.Play(Sfx.UIBack);
+            SceneManager.LoadScene("MainMenu");
+        }
 
     }
 }

@@ -52,6 +52,7 @@ namespace BallPuzzlePlatformer2D
             if (other.CompareTag("Player") && !m_IsPressed)
             {
                 m_IsPressed = true;
+                ProceduralSfx.Play(Sfx.ButtonPress, 1f, 0.03f);
 
                 switch (action)
                 {
@@ -72,6 +73,7 @@ namespace BallPuzzlePlatformer2D
         {
             if (other.CompareTag("Player"))
             {
+                if (m_IsPressed) ProceduralSfx.Play(Sfx.ButtonRelease, 1f, 0.03f);
                 m_IsPressed = false;
 
                 if (action == ButtonAction.SlidePlatform || action == ButtonAction.Both)

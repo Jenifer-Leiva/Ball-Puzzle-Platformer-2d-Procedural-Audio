@@ -18,6 +18,7 @@ namespace BallPuzzlePlatformer2D
                 Player obj = col.gameObject.GetComponent<Player>();
                 if (obj != null)
                 {
+                    ProceduralSfx.Play(Sfx.SawHit);
                     obj.Smash();
                 }
             }

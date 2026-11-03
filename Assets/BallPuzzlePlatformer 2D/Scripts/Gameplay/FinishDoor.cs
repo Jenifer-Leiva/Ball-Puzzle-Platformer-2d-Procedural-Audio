@@ -49,6 +49,7 @@ namespace BallPuzzlePlatformer2D
 
         public void OpenDoor()
         {
+            if (!m_IsOpen) ProceduralSfx.Play(Sfx.DoorOpen);
             m_IsOpen = true;
             m_OpenSprite.SetActive(true);
             m_ClosedSprite.SetActive(false);
@@ -58,6 +59,7 @@ namespace BallPuzzlePlatformer2D
         {
             if (m_IsOpen && other.CompareTag("Player"))
             {
+                ProceduralSfx.Play(Sfx.DoorEnter);
                 CameraFollow.m_Main.StopFollowing();
                 m_Player = other.transform;
                 m_IsBallEntering = true;
@@ -96,6 +98,7 @@ namespace BallPuzzlePlatformer2D
         public void CloseDoor()
         {
             Debug.Log("CloseDoor() called");
+            if (m_IsOpen) ProceduralSfx.Play(Sfx.DoorClose);
             m_IsOpen = false;
             m_OpenSprite.SetActive(false);
             m_ClosedSprite.SetActive(true);

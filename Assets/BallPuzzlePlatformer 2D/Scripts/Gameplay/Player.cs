@@ -26,8 +26,6 @@ namespace BallPuzzlePlatformer2D
         public static Player m_Main;
 
 
-        private GameAudio audioManager;
-
         private void Awake()
         {
             m_Main = this;
@@ -46,7 +44,6 @@ namespace BallPuzzlePlatformer2D
                 m_Joystick = Joystick.GeneralJoystick;
                 m_JumpButton = m_Joystick.ButtonA;
             }
-            audioManager = FindObjectOfType<GameAudio>();
         }
 
         void Update()
@@ -58,11 +55,8 @@ namespace BallPuzzlePlatformer2D
                 rb.AddForce(Vector2.up * m_JumpForce, ForceMode2D.Impulse);
                 m_CanJump = false;
 
-                if (audioManager != null)
-                {
-                    audioManager.Play(GameClip.MovePushHigh);
-                }
-                
+                ProceduralSfx.Play(Sfx.Jump, 2f, 0.05f);
+
             }
             // if (InputControl.m_Main.m_MobileControl)
             // {
@@ -140,6 +134,7 @@ namespace BallPuzzlePlatformer2D
             }
             else if (collision.CompareTag("FallDetector"))
             {
+                ProceduralSfx.Play(Sfx.Fall);
                 Smash();
             }
         }
