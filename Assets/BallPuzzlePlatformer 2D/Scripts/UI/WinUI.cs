@@ -18,8 +18,14 @@ namespace BallPuzzlePlatformer2D
         {
         }
 
+        void OnEnable()
+        {
+            ProceduralSfx.Play(Sfx.Win);
+        }
+
         public void Continue()
         {
+            ProceduralSfx.Play(Sfx.UIClick);
             m_GameplayData.LevelNumber++;
             if (m_GameplayData.LevelNumber > m_Contents.m_Levels.Length - 1)
             {

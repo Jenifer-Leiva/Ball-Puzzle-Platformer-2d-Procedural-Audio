@@ -27,19 +27,24 @@ namespace BallPuzzlePlatformer2D
                     switch (powerUpType)
                     {
                         case PowerUpType.Speed:
+                            ProceduralSfx.Play(Sfx.PowerPickup);
                             player.ApplySpeedBoost(amount, duration);
                             break;
 
                         case PowerUpType.Jump:
+                            ProceduralSfx.Play(Sfx.PowerPickup);
                             player.ApplyJumpBoost(amount, duration);
                             break;
+
                         case PowerUpType.Shrink:
+                            ProceduralSfx.Play(Sfx.PowerShrink);
                             player.ApplySizeChange(0.5f, duration);
                             break;
+
                         case PowerUpType.Grow:
+                            ProceduralSfx.Play(Sfx.PowerGrow);
                             player.ApplySizeChange(1.5f, duration);
                             break;
-
 
                     }
 

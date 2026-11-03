@@ -69,9 +69,9 @@ namespace BallPuzzlePlatformer2D
 
         public void BtnExit()
         {
+            ProceduralSfx.Play(Sfx.UIBack);
             SceneManager.LoadScene("MainMenu");
         }
-
 
     }
 }

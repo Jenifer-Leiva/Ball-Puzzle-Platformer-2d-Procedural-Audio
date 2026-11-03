@@ -13,6 +13,7 @@ namespace BallPuzzlePlatformer2D
                 Rigidbody2D rb = collision.collider.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {
+                    ProceduralSfx.Play(Sfx.JumpPad, 1f, 0.03f);
                     // Reset vertical speed before bounce
                     rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
                     rb.AddForce(Vector2.up * m_BounceForce, ForceMode2D.Impulse);

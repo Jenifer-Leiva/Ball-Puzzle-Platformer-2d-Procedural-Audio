@@ -16,14 +16,15 @@ namespace BallPuzzlePlatformer2D
 
         public void BtnExit()
         {
+            ProceduralSfx.Play(Sfx.UIBack);
             Application.Quit();
         }
 
         public void BtnLevel(int num)
         {
+            ProceduralSfx.Play(Sfx.UIClick);
             m_GameplayData.LevelNumber = num;
             SceneManager.LoadScene("Scene_1");
-
         }
     }
 }
